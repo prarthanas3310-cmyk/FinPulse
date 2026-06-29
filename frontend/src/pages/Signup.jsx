@@ -26,7 +26,7 @@ function Signup() {
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'Arial' }}>
       <div style={{ background: 'white', borderRadius: '24px', padding: '40px', width: '100%', maxWidth: '400px', boxShadow: '0 25px 60px rgba(0,0,0,0.3)' }}>
-        <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '8px' }}>🚀 Create Account</h2>
+        <h2 style={{ textAlign: 'center', color: '#333', marginBottom: '8px' }}> Create Account</h2>
         <p style={{ textAlign: 'center', color: '#888', marginBottom: '30px' }}>Join FinPulse today!</p>
 
         {error && <p style={{ color: '#ff6b6b', textAlign: 'center', marginBottom: '15px' }}>⚠️ {error}</p>}
