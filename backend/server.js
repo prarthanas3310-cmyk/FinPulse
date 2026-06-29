@@ -9,7 +9,10 @@ app.use(cors())
 app.use(express.json())
 
 const calculateRoute = require('./routes/calculate')
+const authRoute = require('./routes/auth')
+
 app.use('/api', calculateRoute)
+app.use('/api/auth', authRoute)
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log('MongoDB Connected ✅'))

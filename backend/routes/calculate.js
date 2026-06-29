@@ -1,7 +1,9 @@
 const express = require('express')
 const router = express.Router()
-const { calculateScore } = require('../controllers/scoreController')
+const { calculateScore, getHistory } = require('../controllers/scoreController')
+const authMiddleware = require('../middleware/auth')
 
-router.post('/calculate', calculateScore)
+router.post('/calculate', authMiddleware, calculateScore)
+router.get('/history', authMiddleware, getHistory)
 
 module.exports = router
