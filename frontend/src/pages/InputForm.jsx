@@ -17,7 +17,7 @@ function InputForm() {
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/calculate', formData)
+      const response = await axios.post('https://finpulse-backend-tj8s.onrender.com/api/calculate', formData)
       navigate('/result', { state: response.data })
     } catch (error) {
       console.log(error)
