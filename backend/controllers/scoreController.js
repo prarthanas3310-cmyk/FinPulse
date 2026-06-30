@@ -3,14 +3,14 @@ const axios = require('axios')
 
 const ML_API_URL = 'https://finpulse-backend-4bi7.onrender.com/predict'
 
-const callMLWithRetry = async (payload, retries = 2) => {
+const callMLWithRetry = async (payload, retries = 5) => {
   for (let i = 0; i <= retries; i++) {
     try {
-      return await axios.post(ML_API_URL, payload, { timeout: 60000 })
+      return await axios.post(ML_API_URL, payload, { timeout: 20000 })
     } catch (err) {
       if (i === retries) throw err
-      console.log(`ML API attempt ${i + 1} failed, retrying in 5s...`)
-      await new Promise(r => setTimeout(r, 5000))
+      console.log(`ML API attempt ${i + 1} failed, retrying in 10s...`)
+      await new Promise(r => setTimeout(r, 10000))
     }
   }
 }
