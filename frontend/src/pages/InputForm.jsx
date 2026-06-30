@@ -10,6 +10,7 @@ function InputForm() {
   const [formData, setFormData] = useState({ income: '', expenses: '', savings: '', debt: '' })
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [submitError, setSubmitError] = useState('')
 
   const fields = [
     { name: 'income', label: 'Monthly Income', icon: '💵', placeholder: 'e.g. 50000' },
@@ -36,15 +37,17 @@ function InputForm() {
     const newErrors = validate()
     if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return }
     setLoading(true)
+    setSubmitError('')
     try {
       const response = await axios.post(
         'https://finpulse-node-backend.onrender.com/api/calculate',
         formData,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` }, timeout: 70000 }
       )
       navigate('/result', { state: response.data })
     } catch (error) {
       console.log(error)
+      setSubmitError('Score service is waking up — please click again in a moment.')
     }
     setLoading(false)
   }
@@ -76,6 +79,18 @@ function InputForm() {
               {errors[field.name] && <p style={{ color: '#ff6b6b', fontSize: '0.8rem', margin: '4px 0 0' }}>⚠️ {errors[field.name]}</p>}
             </div>
           ))}
+
+          {loading && (
+            <p style={{ textAlign: 'center', color: '#667eea', fontSize: '0.85rem', marginBottom: '10px' }}>
+              First request can take up to a minute while the score service wakes up. Please don't refresh.
+            </p>
+          )}
+
+          {submitError && (
+            <p style={{ textAlign: 'center', color: '#ff6b6b', fontSize: '0.85rem', marginBottom: '10px' }}>
+              ⚠️ {submitError}
+            </p>
+          )}
 
           <button onClick={handleSubmit} disabled={loading} style={{
             width: '100%',
