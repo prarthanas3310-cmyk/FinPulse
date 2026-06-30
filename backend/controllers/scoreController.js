@@ -3,18 +3,25 @@ const axios = require('axios')
 
 const ML_API_URL = 'https://finpulse-backend-4bi7.onrender.com/predict'
 
+const callMLWithRetry = async (payload, retries = 2) => {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await axios.post(ML_API_URL, payload, { timeout: 60000 })
+    } catch (err) {
+      if (i === retries) throw err
+      console.log(`ML API attempt ${i + 1} failed, retrying in 5s...`)
+      await new Promise(r => setTimeout(r, 5000))
+    }
+  }
+}
+
 const calculateScore = async (req, res) => {
   const { income, expenses, savings, debt } = req.body
 
   try {
-    // Call the ML model API
-    const mlResponse = await axios.post(ML_API_URL, {
-      income, expenses, savings, debt
-    })
-
+    const mlResponse = await callMLWithRetry({ income, expenses, savings, debt })
     const { score, grade, label, color, insights, breakdown } = mlResponse.data
 
-    // Save to database if user is logged in
     if (req.userId) {
       const newScore = new Score({
         userId: req.userId,
@@ -28,8 +35,8 @@ const calculateScore = async (req, res) => {
     res.json({ score, grade, label, color, insights, breakdown })
 
   } catch (err) {
-    console.log('ML API error:', err.message)
-    res.status(500).json({ message: 'Failed to calculate score. Please try again.' })
+    console.log('ML API error after retries:', err.message)
+    res.status(500).json({ message: 'Score service is waking up, please try again in a moment.' })
   }
 }
 
