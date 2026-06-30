@@ -1,36 +1,36 @@
 const Score = require('../models/Score')
+const axios = require('axios')
+
+const ML_API_URL = 'https://finpulse-backend-4bi7.onrender.com/predict'
 
 const calculateScore = async (req, res) => {
   const { income, expenses, savings, debt } = req.body
 
-  const savingsRatio = (savings / income) * 100
-  const debtRatio = (debt / income) * 100
-  const expenseRatio = (expenses / income) * 100
-
-  let score = 100
-  if (savingsRatio < 10) score -= 30
-  else if (savingsRatio < 20) score -= 15
-  if (debtRatio > 50) score -= 30
-  else if (debtRatio > 30) score -= 15
-  if (expenseRatio > 80) score -= 20
-  else if (expenseRatio > 60) score -= 10
-
-  let category = ''
-  if (score >= 75) category = 'Good 🟢'
-  else if (score >= 50) category = 'Average 🟡'
-  else category = 'Poor 🔴'
-
-  // Save to database if user is logged in
-  if (req.userId) {
-    const newScore = new Score({
-      userId: req.userId,
-      income, expenses, savings, debt,
-      score, category
+  try {
+    // Call the ML model API
+    const mlResponse = await axios.post(ML_API_URL, {
+      income, expenses, savings, debt
     })
-    await newScore.save()
-  }
 
-  res.json({ score, category })
+    const { score, grade, label, color, insights, breakdown } = mlResponse.data
+
+    // Save to database if user is logged in
+    if (req.userId) {
+      const newScore = new Score({
+        userId: req.userId,
+        income, expenses, savings, debt,
+        score,
+        category: label
+      })
+      await newScore.save()
+    }
+
+    res.json({ score, grade, label, color, insights, breakdown })
+
+  } catch (err) {
+    console.log('ML API error:', err.message)
+    res.status(500).json({ message: 'Failed to calculate score. Please try again.' })
+  }
 }
 
 const getHistory = async (req, res) => {
