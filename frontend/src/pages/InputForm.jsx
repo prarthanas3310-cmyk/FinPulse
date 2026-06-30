@@ -38,7 +38,7 @@ function InputForm() {
     setLoading(true)
     try {
       const response = await axios.post(
-        'https://finpulse-backend-tj8s.onrender.com/api/calculate',
+        'https://finpulse-node-backend.onrender.com/api/calculate',
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       )

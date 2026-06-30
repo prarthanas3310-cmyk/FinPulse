@@ -14,7 +14,7 @@ function Signup() {
     setLoading(true)
     setError('')
     try {
-      const res = await axios.post('https://finpulse-backend-tj8s.onrender.com/api/auth/signup', formData)
+      const res = await axios.post('https://finpulse-node-backend.onrender.com/api/auth/signup', formData)
       login(res.data.user, res.data.token)
       navigate('/form')
     } catch (err) {

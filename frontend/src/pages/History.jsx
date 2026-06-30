@@ -17,7 +17,7 @@ function History() {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get('https://finpulse-backend-tj8s.onrender.com/api/history', {
+      const res = await axios.get('https://finpulse-node-backend.onrender.com/api/history', {
         headers: { Authorization: `Bearer ${token}` }
       })
       setHistory(res.data)
